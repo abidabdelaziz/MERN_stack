@@ -7,13 +7,16 @@ const PORT = process.env.PORT || 3001;
 const bodyParser = require("body-parser")
 const path = require("path")
 const mongoose = require("mongoose");
-const blogPosts = [];
+
+const Blog = require("./models/blog")
 
 //this allows us to serve files out of build folder
 app.use(express.static("client/build"));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
+
+mongoose.connect("mongodb://localhost/my-blog");
 
 app.get("/", (req,res)=>{ res.send("hi")});
 
@@ -25,9 +28,12 @@ app.get("/api/test", (req,res) => {
 
 app.post("/api/blog", (req,res)=>{
     console.log(req.body);
-    blogPosts.push(req.body)
-    res.json(blogPosts)//send data here
+    Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here)
+    
 })
+
+
+
 
 // Catch all if routes dont work
 app.use((req,res)=>{
