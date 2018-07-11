@@ -16,7 +16,7 @@ app.use(express.static("client/build"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 
-mongoose.connect("mongodb://localhost/my-blog");
+mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/my-blog"); // FOR HEROKU DEPLOYMENT
 
 app.get("/", (req,res)=>{ res.send("hi")});
 
