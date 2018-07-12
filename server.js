@@ -21,16 +21,18 @@ mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/my-blog"); // FO
 app.get("/", (req,res)=>{ res.send("hi")});
 
 
-app.get("/api/test", (req,res) => {
-    console.log(req.body)
-    res.json(true);
-})
+app.get("/api/blog", (req,res) => {
+
+    // Model is how we interact with DB, mongoose queries
+    Blog.find({}).then(results => res.json(results));
+  
+});
 
 app.post("/api/blog", (req,res)=>{
     console.log(req.body);
     Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here)
     
-})
+});
 
 
 

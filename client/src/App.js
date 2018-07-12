@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from "axios"//promise based HTTP client for browser and node.js...aijax
 import './App.css';
-
+import ViewBlog from './pages/ViewBlog'
 class App extends Component {
 
     state= {
@@ -41,6 +41,9 @@ class App extends Component {
           <textArea name = "body" onChange= {this.handleInputChange} value = {this.state.body}></textArea> 
           <button onClick={this.postBlog}>Submit</button>
         </form>
+
+      <ViewBlog />
+
       </div>
     );
   }
