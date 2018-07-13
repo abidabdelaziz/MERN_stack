@@ -30,7 +30,7 @@ app.get("/api/blog", (req,res) => {
 
 app.post("/api/blog", (req,res)=>{
     console.log(req.body);
-    Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here)
+    Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here for db
     
 });
 
