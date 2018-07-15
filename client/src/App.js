@@ -4,7 +4,7 @@ import Auth from "./auth/Auth.js"
 import Callback from "./CallBack/Callback.js"
 
 
-import { Router, Route} from "react-router-dom"
+import { Router, Route} from 'react-router-dom'
 import history from "./history.js"
 import ViewBlog from './pages/ViewBlog';
 import EditBlog from './pages/EditBlog';
@@ -20,28 +20,29 @@ class App extends Component {
 
     
   // router below can only have one element in it
+  // we add auth to each opf the props for a componenet below as well
   render() {
     const { isAuthenticated } = auth; // destructuring
     return(
       
      <Router history ={history}> 
      <div>
-       <div>
+        <div>
 
-        {isAuthenticated() ? 
-        (<div> <button onClick={()=>auth.logout()}>Log Out</button>Logged In</div>) : 
+          {isAuthenticated() ? 
+          (<div> <button onClick={()=>auth.logout()}>Log Out</button>Logged In</div>) : 
+          
+          (<div><button onClick={()=>auth.login()}>Log In</button>Logged Out</div>)};
+
+        </div>
+
+        <Route exact path="/" render={(props) => <ViewBlog auth={auth} {...props} />} />
+        <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />} />
         
-        (<div><button onClick={()=>auth.login()}>Log In</button>Logged Out</div>)};
-
-      </div>
-
-      <Route exact path="/" render={(props) => <ViewBlog auth={auth} {...props} />} />
-      <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />} />
-       
-      <Route path="/callback" render={(props) => {
-          handleAuthentication(props);
-          return <Callback {...props} />
-      }}/>
+        <Route path="/callback" render={(props) => {
+            handleAuthentication(props);
+            return <Callback {...props} />
+        }}/>
       </div>
       </Router>
 )}

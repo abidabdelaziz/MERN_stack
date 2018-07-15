@@ -32,7 +32,7 @@ class EditBlog extends Component{
 
        
     render(){
-            if(this.props.auth.isAuthenticated()){
+            if(!this.props.auth.isAuthenticated()){
                 this.props.history.push("/");
                 return (
                     <div> nope ... </div>
