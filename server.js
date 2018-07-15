@@ -24,7 +24,7 @@ app.get("/", (req,res)=>{ res.send("hi")});
 app.get("/api/blog", (req,res) => {
 
     // Model is how we interact with DB, mongoose queries
-    Blog.find({}).then(results => res.json(results));
+    Blog.find({}).sort({createdAt: -1}).then(results => res.json(results));
   
 });
 

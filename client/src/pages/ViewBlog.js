@@ -20,10 +20,12 @@ class ViewBlog extends Component{
 
     refreshBlogs(){
         console.log("working?")
-        axios.get("/api/blog").then( (res)=> console.log(res));
+        axios.get("/api/blog").then( (res)=>{
+            console.log(res);
     
-        //this.setState({blogs: res.data}); // Changes state after successfull promise
-        
+            this.setState({blogs: res.data}); // Changes state after successfull promise
+            
+        })
     }
 
     componentDidMount(){
@@ -34,9 +36,10 @@ class ViewBlog extends Component{
     return (
 
         <div>
-            <Link to="/edit">View Blog Post</Link>
+            <Link to="/edit">New Blog Post</Link>
             {this.state.blogs.map( post =>(
                     <div key={post.id}>
+                    <h3>Created at {post.createdAt} </h3>
                     <h1>{post.title}</h1>
                     <p>{post.body}</p>
                     </div>

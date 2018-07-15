@@ -1,8 +1,13 @@
 import React, {Component} from "react"
 import axios from "axios"//promise based HTTP client for browser and node.js...aijax
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+// histor yhas two methods push, and replace
+// puhs navigating somewhere new, replace we are switching(url)
 
-export default class EditBlog extends React.Component{ 
+import Auth from '../auth/Auth.js';
+
+
+class EditBlog extends Component{ 
 
     state= {
         title:"",
@@ -13,7 +18,7 @@ export default class EditBlog extends React.Component{
         //const value = event.target.value;
         // ^equivalent^
         const {name, value} = event.target;
-        console.log(name)
+        console.log(name);
         this.setState({[name]:value});
       }
   
@@ -21,10 +26,19 @@ export default class EditBlog extends React.Component{
         event.preventDefault();
         const {title, body} = this.state;
         axios.post("/api/blog",{title, body}).then(res=> console.log(res));
-        this.setState({ title: "",body:""})
+        this.setState({ title: "",body:""});
+        this.props.history.push("/");
       }
 
+       
     render(){
+            if(this.props.auth.isAuthenticated()){
+                this.props.history.push("/");
+                return (
+                    <div> nope ... </div>
+                );
+            } 
+
         return( 
     <div>
     <form>
@@ -37,3 +51,5 @@ export default class EditBlog extends React.Component{
     </div>
 
 )}}
+
+export default withRouter(EditBlog)
