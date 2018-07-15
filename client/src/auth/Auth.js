@@ -2,12 +2,12 @@
 import auth0 from 'auth0-js';
 import history from '../history';//package for dealing with different browser history
 
-
+const origin = window.location.origin;
 export default class Auth {
   auth0 = new auth0.WebAuth({
     domain: 'buddha.auth0.com',
     clientID: 'MdYqYOyz8rHwASNJu6BFbIpFU1JCLBVn',
-    redirectUri: 'http://localhost:3000/callback',
+    redirectUri: origin + '/callback',
     audience: 'https://buddha.auth0.com/userinfo',
     responseType: 'token id_token',
     scope: 'openid'
