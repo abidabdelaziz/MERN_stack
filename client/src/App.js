@@ -36,9 +36,8 @@ class App extends Component {
 
         </div>
 
-        <Route exact path="/" render={(props) => <ViewBlog auth={auth} {...props} />} />
-        <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />} />
-        
+        <Route exact path="/" render={(props) => <ViewBlog auth={auth} {...props} />}/>
+        <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />}/>     
         <Route path="/callback" render={(props) => {
             handleAuthentication(props);
             return <Callback {...props} />

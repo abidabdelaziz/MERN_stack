@@ -4,7 +4,7 @@ import { Link, withRouter } from "react-router-dom";
 // histor yhas two methods push, and replace
 // puhs navigating somewhere new, replace we are switching(url)
 
-import Auth from '../auth/Auth.js';
+//import Auth from '../auth/Auth.js';
 
 
 class EditBlog extends Component{ 

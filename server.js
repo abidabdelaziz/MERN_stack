@@ -1,15 +1,30 @@
 //Server with routes
-
-
 const express = require("express")
 const app = express();
 const PORT = process.env.PORT || 3001;
 const bodyParser = require("body-parser")
 const path = require("path")
-const mongoose = require("mongoose");
 
+const mongoose = require("mongoose");
 const Blog = require("./models/blog")
 
+const jwt = require("express-jwt");
+const jwtAuthz= require("express-jwt-authz");
+const jwksRsa = require("jwks-rsa");
+
+const checkJwt = jwt({
+    secret: jwksRsa.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: "https://buddha.auth0.com/.well-known/jwks.json"
+    }),
+    audience: 'my-mern',
+    issuer: "https://buddha.auth0.com/",
+    algorithms: ['RS256']
+});
+
+const checkWriteBlog = jwtAuthz(['write:messages'])
 //this allows us to serve files out of build folder
 app.use(express.static("client/build"));
 
@@ -28,7 +43,7 @@ app.get("/api/blog", (req,res) => {
   
 });
 
-app.post("/api/blog", (req,res)=>{
+app.post("/api/blog",checkJwt, checkWriteBlog, (req,res)=>{ //checkJwt is for log in checkScopes is for privelage
     console.log(req.body);
     Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here for db
     
