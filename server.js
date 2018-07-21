@@ -1,9 +1,16 @@
 //Server with routes
 const express = require("express")
 const app = express();
-const PORT = process.env.PORT || 3001;
 const bodyParser = require("body-parser")
 const path = require("path")
+
+const cors = require('cors')
+const PORT = process.env.PORT || 3001;
+
+const corsOptions = {
+    origin: 'https://localhost:3000'
+};
+app.use(cors(corsOptions));
 
 const mongoose = require("mongoose");
 const Blog = require("./models/blog")
@@ -24,7 +31,7 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-const checkWriteBlog = jwtAuthz(['write:messages'])
+const checkWriteBlog = jwtAuthz(['read:mern'])
 //this allows us to serve files out of build folder
 app.use(express.static("client/build"));
 
@@ -42,19 +49,16 @@ app.get("/api/blog", (req,res) => {
     Blog.find({}).sort({createdAt: -1}).then(results => res.json(results));
   
 });
-
-app.post("/api/blog",checkJwt, checkWriteBlog, (req,res)=>{ //checkJwt is for log in checkScopes is for privelage
+// checkWriteBlog
+app.post("/api/blog", checkJwt, (req,res)=>{ //checkJwt is for log in checkScopes is for privelage
     console.log(req.body);
     Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here for db
     
 });
 
-
-
-
 // Catch all if routes dont work
 app.use((req,res)=>{
-    res.sendFile(path.join(__dirname, "client/buiold/index.html"))
+    res.sendFile(path.join(__dirname, "client/build/index.html"))
 });
 
 app.listen(PORT, () =>{ console.log(`API server now listening on ${PORT}`)});

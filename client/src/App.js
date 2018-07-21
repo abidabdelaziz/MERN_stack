@@ -8,6 +8,7 @@ import { Router, Route} from 'react-router-dom'
 import history from "./history.js"
 import ViewBlog from './pages/ViewBlog';
 import EditBlog from './pages/EditBlog';
+import Profile from './pages/Profile';
 
 const auth = new Auth();
 const handleAuthentication = (nextState, replace) => {
@@ -32,12 +33,13 @@ class App extends Component {
           {isAuthenticated() ? 
           (<div> <button onClick={()=>auth.logout()}>Log Out</button>Logged In</div>) : 
           
-          (<div><button onClick={()=>auth.login()}>Log In</button>Logged Out</div>)};
+          (<div><button onClick={()=>auth.login()}>Log In</button>Logged Out</div>)}
 
         </div>
 
         <Route exact path="/" render={(props) => <ViewBlog auth={auth} {...props} />}/>
-        <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />}/>     
+        <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />}/> 
+        <Route path="/profile" render={(props) => <Profile auth={auth} {...props} />}/>     
         <Route path="/callback" render={(props) => {
             handleAuthentication(props);
             return <Callback {...props} />

@@ -8,9 +8,10 @@ export default class Auth {
     domain: 'buddha.auth0.com',
     clientID: 'MdYqYOyz8rHwASNJu6BFbIpFU1JCLBVn',
     redirectUri: origin + '/callback',
-    audience: 'https://buddha.auth0.com/userinfo',
+    audience: 'my-mern',
+    // audience: "https://buddha.auth0.com/userinfo",
     responseType: 'token id_token',
-    scope: 'openid profile'
+    scope: 'openid profile read:mern write:mern'
   });
 
   userProfile;
@@ -22,10 +23,12 @@ constructor() {
   this.handleAuthentication = this.handleAuthentication.bind(this);
   this.isAuthenticated = this.isAuthenticated.bind(this);
   this.getProfile = this.getProfile.bind(this);
+  this.getAccessToken = this.getAccessToken.bind(this);
 }
 
 getAccessToken() {
-  const accessToken = localStorage.getItem('access_token');
+  let accessToken = localStorage.getItem('access_token');
+  console.log("accesstoken:",accessToken)
   if (!accessToken) {
     throw new Error('No Access Token found');
   }
@@ -35,6 +38,7 @@ getAccessToken() {
 //...
 getProfile(cb) {
 let accessToken = this.getAccessToken();
+console.log("Accesstoken call",accessToken)
 this.auth0.client.userInfo(accessToken, (err, profile) => {
   if (profile) {
     this.userProfile = profile;

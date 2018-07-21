@@ -2,6 +2,7 @@ import React, {Component} from "react"
 import axios from "axios"
 import { Link } from "react-router-dom";
 
+
 class ViewBlog extends Component{
 
     state= {
@@ -19,10 +20,9 @@ class ViewBlog extends Component{
 
 
     refreshBlogs(){
-        console.log("working?")
+        console.log("componentDidMount")
         axios.get("/api/blog").then( (res)=>{
-            console.log(res);
-    
+
             this.setState({blogs: res.data}); // Changes state after successfull promise
             
         })
@@ -37,6 +37,7 @@ class ViewBlog extends Component{
 
         <div>
             <Link to="/edit">New Blog Post</Link>
+            <Link to="/profile">Profile</Link>
             {this.state.blogs.map( post =>(
                     <div key={post._id}>
                     <h3>Created at {post.createdAt} </h3>

@@ -1,10 +1,10 @@
 import React, {Component} from "react"
 import axios from "axios"//promise based HTTP client for browser and node.js...aijax
 import { Link, withRouter } from "react-router-dom";
-// histor yhas two methods push, and replace
-// puhs navigating somewhere new, replace we are switching(url)
+// history has two methods push, and replace
+// push navigating somewhere new, replace we are switching(url)
 
-//import Auth from '../auth/Auth.js';
+import Auth from '../auth/Auth.js';
 
 
 class EditBlog extends Component{ 
@@ -13,22 +13,26 @@ class EditBlog extends Component{
         title:"",
         body:""
       }
-      handleInputChange = event =>{
+    handleInputChange = event =>{
         //const name = event.target.name; 
         //const value = event.target.value;
         // ^equivalent^
         const {name, value} = event.target;
         console.log(name);
         this.setState({[name]:value});
-      }
-  
-      postBlog = event =>{
+    }
+
+    postBlog = event =>{
         event.preventDefault();
+        const { getAccessToken } = this.props.auth;
+        console.log("access token maybe?", this)
+        const headers = { 'Authorization': `Bearer ${getAccessToken()}`};
+        console.log(headers)
         const {title, body} = this.state;
-        axios.post("/api/blog",{title, body}).then(res=> console.log(res));
+        axios.post("/api/blog",{title, body},{withCredentials:true,headers}).then(res=> console.log("Axios response:",res));
         this.setState({ title: "",body:""});
         this.props.history.push("/");
-      }
+    }
 
        
     render(){
