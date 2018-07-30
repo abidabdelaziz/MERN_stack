@@ -4,6 +4,8 @@ import history from '../history';//package for dealing with different browser hi
 
 const origin = window.location.origin;
 export default class Auth {
+
+  requestedScopes = 'openid profile read:mern write:mern'
   auth0 = new auth0.WebAuth({
     domain: 'buddha.auth0.com',
     clientID: 'MdYqYOyz8rHwASNJu6BFbIpFU1JCLBVn',
@@ -11,7 +13,7 @@ export default class Auth {
     audience: 'my-mern',
     // audience: "https://buddha.auth0.com/userinfo",
     responseType: 'token id_token',
-    scope: 'openid profile read:mern write:mern'
+    scope: this.requestedScopes
   });
 
   userProfile;
@@ -24,15 +26,25 @@ constructor() {
   this.isAuthenticated = this.isAuthenticated.bind(this);
   this.getProfile = this.getProfile.bind(this);
   this.getAccessToken = this.getAccessToken.bind(this);
+  this.userHasScopes = this.userHasScopes.bind(this);
 }
 
 getAccessToken() {
-  let accessToken = localStorage.getItem('access_token');
+  const accessToken = localStorage.getItem('access_token');
   console.log("accesstoken:",accessToken)
   if (!accessToken) {
     throw new Error('No Access Token found');
   }
   return accessToken;
+}
+
+
+userHasScopes(){
+  let _scopes = JSON.parse(localStorage.getItem("scopes"))|| "";
+  const grantedScopes = _scopes.split(' ');
+  console.log("Granted Scopes", grantedScopes)
+  return grantedScopes
+  
 }
 
 //...
@@ -48,48 +60,53 @@ this.auth0.client.userInfo(accessToken, (err, profile) => {
 }
 //parse the hash and gives us access and id tokens
 //after hittingt those statements then go back to these routes
-  handleAuthentication() {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult);
-        history.replace('/');
-      } else if (err) {
-        history.replace('/');
-        console.log(err);
-      }
-    });
-  }
+handleAuthentication() {
+  this.auth0.parseHash((err, authResult) => {
+    if (authResult && authResult.accessToken && authResult.idToken) {
+      this.setSession(authResult);
+      history.replace('/');
+    } else if (err) {
+      history.replace('/');
+      console.log(err);
+    }
+  });
+}
 
 //Handle these credentials in local storage
-  setSession(authResult) {
+setSession(authResult) {
+
 // Set the time that the Access Token will expire at
-    let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    localStorage.setItem('access_token', authResult.accessToken);
-    localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('expires_at', expiresAt);
+  let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+  localStorage.setItem('access_token', authResult.accessToken);
+  localStorage.setItem('id_token', authResult.idToken);
+  localStorage.setItem('expires_at', expiresAt);
+
+  const scopes = authResult.scope || this.requestedScopes || "";
+  localStorage.setItem("scopes",JSON.stringify(scopes));
 // navigate to the home route
-    history.replace('/');
-  }
+  history.replace('/');
+}
 
-  login() {
-    this.auth0.authorize();
-  }
+login() {
+  this.auth0.authorize();
+}
 
-  logout() {
+logout() {
 // Clear Access Token and ID Token from local storage
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('id_token');
+  localStorage.removeItem('expires_at');
+  localStorage.removeItem('scopes');
 // navigate to the home route
     history.replace('/');
   }
 
-  isAuthenticated() {
+isAuthenticated() {
 // Check whether the current time is past the 
 // Access Token's expiry time
-    let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
-    return new Date().getTime() < expiresAt;
-  }
+  let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+  return new Date().getTime() < expiresAt;
+}
 }
 
 

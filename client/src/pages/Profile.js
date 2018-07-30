@@ -10,6 +10,7 @@ export default class Profile extends Component {
         if (!userProfile) {
           getProfile((err, profile) => {
             this.setState({ profile });
+            console.log(profile)
           });
         } else {
           this.setState({ profile: userProfile });
@@ -19,13 +20,24 @@ export default class Profile extends Component {
     render(){
         const { profile } = this.state;
         return(
-            <div>Profile
+            <div>
+            <nav className="rowOne">
                  <Link to="/">Home</Link>
-                 <Link to="/edit">Add Post</Link>
-            <img src={profile.picture} alt="profile" />
-            <h1>{profile.name}</h1> 
+                 
+            </nav>
+
+            <div className="rowTwo">
+                <div className="colPic">
+                    <img src={profile.picture} alt="profile"/>
+                </div>
+                <div className="colProf">
+                <h1>{profile.name}</h1>
+                <h2> The idea of this application is to allow a Mom and Pop shop to recieve orders from customers online. The ultimate goal in incorporating this application is to ease the customer experience while at the same time increase the exposure the customer has to the brand.</h2>
+                 
+                </div>
 
 
+            </div>
             </div>
         )
     }

@@ -19,19 +19,25 @@ const jwt = require("express-jwt");
 const jwtAuthz= require("express-jwt-authz");
 const jwksRsa = require("jwks-rsa");
 
+const dotenv= require("dotenv")
+dotenv.config()
+
+if(!process.env.AUTH0_DOMAIN || !process.env.AUTH0_AUDIENCE){
+    throw 'Make sure you have an AUTH0_DOMAIN and AUTH0_AUDIENCE confiigured:)';
+}
 const checkJwt = jwt({
     secret: jwksRsa.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: "https://buddha.auth0.com/.well-known/jwks.json"
+        jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
     }),
-    audience: 'my-mern',
-    issuer: "https://buddha.auth0.com/",
+    audience: process.env.AUTH0_AUDIENCE,
+    issuer: `${process.env.AUTH0_DOMAIN}/`,
     algorithms: ['RS256']
 });
 
-const checkWriteBlog = jwtAuthz(['read:mern'])
+const checkWriteBlog = jwtAuthz([ 'read:mern'])
 //this allows us to serve files out of build folder
 app.use(express.static("client/build"));
 
@@ -45,13 +51,14 @@ app.get("/", (req,res)=>{ res.send("hi")});
 
 app.get("/api/blog", (req,res) => {
 
+    console.log("trying to fetch posts")
     // Model is how we interact with DB, mongoose queries
     Blog.find({}).sort({createdAt: -1}).then(results => res.json(results));
   
 });
 // checkWriteBlog
-app.post("/api/blog", checkJwt, (req,res)=>{ //checkJwt is for log in checkScopes is for privelage
-    console.log(req.body);
+app.post("/api/blog", checkJwt, checkWriteBlog,(req,res)=>{ //checkJwt is for log in checkScopes is for privelage
+
     Blog.create(req.body).then( dbBlog=>res.json(dbBlog));//send data here for db
     
 });

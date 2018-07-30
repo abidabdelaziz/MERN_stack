@@ -4,47 +4,48 @@ import Auth from "./auth/Auth.js"
 import Callback from "./CallBack/Callback.js"
 
 
-import { Router, Route} from 'react-router-dom'
+import { Router, Route, Redirect} from 'react-router-dom'
 import history from "./history.js"
-import ViewBlog from './pages/ViewBlog';
-import EditBlog from './pages/EditBlog';
 import Profile from './pages/Profile';
-
+import Nav from './Nav';
 const auth = new Auth();
-const handleAuthentication = (nextState, replace) => {
-  if (/access_token|id_token|error/.test(nextState.location.hash)) {
-    auth.handleAuthentication();
-  }
-}
+
 
 class App extends Component {
 
-    
+
   // router below can only have one element in it
   // we add auth to each opf the props for a componenet below as well
   render() {
-    const { isAuthenticated } = auth; // destructuring
+   // const { isAuthenticated } = this.auth; // destructuring
     return(
       
      <Router history ={history}> 
-     <div>
-        <div>
+     <div className="appWrapper">
 
-          {isAuthenticated() ? 
-          (<div> <button onClick={()=>auth.logout()}>Log Out</button>Logged In</div>) : 
-          
-          (<div><button onClick={()=>auth.login()}>Log In</button>Logged Out</div>)}
+     
 
-        </div>
+        <Route exact path="/" render={(props) => <Nav auth={auth} {...props} />}/>
 
-        <Route exact path="/" render={(props) => <ViewBlog auth={auth} {...props} />}/>
-        <Route path="/edit" render={(props) => <EditBlog auth={auth} {...props} />}/> 
-        <Route path="/profile" render={(props) => <Profile auth={auth} {...props} />}/>     
+        {/* <Route exact path="/edit" render={(props) => {
+          console.log(auth.isAuthenticated())
+          let userScopes= auth.userHasScopes();
+          console.log( userScopes)
+          return (auth.isAuthenticated() && userScopes.includes("write:mern"))? 
+            (<EditBlog auth={auth} {...props}/>) 
+            : (<Redirect to="/"/>);
+        } }/> */}
+
+        <Route exact path="/profile" render={(props) =>{
+          return (auth.isAuthenticated()) ? (
+            <Profile auth={auth} {...props}/>
+        ) : (<Redirect to="/"/>)}}/>    
+
         <Route path="/callback" render={(props) => {
-            handleAuthentication(props);
+            auth.handleAuthentication(props);
             return <Callback {...props} />
         }}/>
-      </div>
+      </div>  
       </Router>
 )}
 }
